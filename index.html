@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/picnic@7.1.0/picnic.min.css" />
+  </head>
+
+  <body>
+    <label>
+      Top-Left Coordinates
+      <div class="flex two">
+        <input id="lat0" type="number" placeholder="Latitude From" />
+        <input id="lng0" type="number" placeholder="Longitude From" />
+      </div>
+    </label>
+    <label>
+      Bottom-Right Coordinates
+      <div class="flex two">
+        <input id="lat1" type="number" placeholder="Latitude To" />
+        <input id="lng1" type="number" placeholder="Longitude To" />
+      </div>
+    </label>
+    <label>
+      Level
+      <input id="level" type="number" min="1" max="30" placeholder="S2 Level" />
+    </label>
+    <br />
+    <br />
+    <button onclick="displayTokens()">Retrieve Tokens</button>
+    <textarea id="tokens" placeholder="Computed Tokens"></textarea>
+  </body>
+
+  <script>
+    async function displayTokens() {
+      const lat0 = parseFloat(document.querySelector("#lat0").value);
+      const lng0 = parseFloat(document.querySelector("#lng0").value);
+      const lat1 = parseFloat(document.querySelector("#lat1").value);
+      const lng1 = parseFloat(document.querySelector("#lng1").value);
+      const level = parseInt(document.querySelector("#level").value);
+
+      const minlat = Math.min(lat0, lat1);
+      const minlng = Math.min(lng0, lng1);
+      const maxlat = Math.max(lat0, lat1);
+      const maxlng = Math.max(lng0, lng1);
+      const vertices = [
+        [minlat, minlng],
+        [minlat, maxlng],
+        [maxlat, maxlng],
+        [maxlat, minlng],
+      ];
+
+      const qs = new URLSearchParams();
+      qs.set("level", level);
+      qs.set("latlngs", vertices.map((latlng) => latlng.join(",")).join(" "));
+
+      const url = "/tokens?" + qs.toString();
+      const result = await fetch(url).then((res) => res.json());
+      document.querySelector("#tokens").innerText = result.join(" ");
+    }
+  </script>
+</html>
