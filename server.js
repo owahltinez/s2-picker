@@ -30,4 +30,7 @@ server.get('/tokens', (req, res) => {
 });
 
 // Run the server and report out to the logs
-server.listen({ port: process.env.PORT, host: "0.0.0.0" });
+const port = process.env.PORT || 8080;
+server.listen({ port: port, host: "0.0.0.0" }, () => {
+    console.log(`Listening on port ${port}.`);
+});
